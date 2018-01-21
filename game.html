@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jedi Game</title>
+    <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
+    />
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: arial;
+            padding: 40px;
+        }
+
+        #game {
+            width: 300px;
+            height: 300px;
+            float: left;
+        }
+
+        #game > div {
+            background: green;
+            border: solid 1px;
+            width: 100px;
+            height: 100px;
+            float: left;
+        }
+
+        #game > div.active {
+            background: red;
+            cursor: pointer;
+        }
+
+        #side {
+            float: left;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>
+    Jedi Game
+</h1>
+<div id="game">
+    <div></div>
+    <div></div>
+    <div></div>
+
+    <div></div>
+    <div></div>
+    <div></div>
+
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+<div id="side">
+    <h5>Stan gry: <span id="state">stop</span></h5>
+    <h5>Wynik: <span id="score">stop</span></h5>
+    <h5>
+        Poziom trudności:
+    </h5>
+    <label>
+        <input type="radio" name="level" value="easy" checked />
+        easy
+    </label>
+    <label>
+        <input type="radio" name="level" value="hard" />
+        hard
+    </label>
+    <div></div>
+    <a href="#" class="btn btn-primary">
+        Start!
+    </a>
+</div>
+<script
+        src="https://code.jquery.com/jquery-3.2.1.js"
+        integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+        crossorigin="anonymous"></script>
+<script>
+    var score = 0;
+    function playSound(name) {
+        var audio = new Audio(name +'.ogg');
+        audio.play();
+    }
+    function startGame() {
+
+        const level = $('[name="level"]:checked').val();
+        const interval = level === 'easy' ? 1000 : 500;
+
+        $('#state').text('in progress');
+        score = 0;
+        $('#score').text(score);
+        activeRandomElement();
+        const intervalHandler = setInterval(function () {
+            activeRandomElement();
+        }, interval);
+        setTimeout(function () {
+            clearInterval(intervalHandler);
+            $('#state').text('stop');
+            alert('Twój wynik: ' + score);
+        }, 10000);
+
+        $('.btn-primary').prop('disabled', true);
+    }
+    function activeRandomElement() {
+        const randomId = Math.floor(Math.random() * 9);
+        const $activeElement = $('#game > div').eq(randomId);
+        $activeElement.addClass('active');
+        playSound('spawn');
+        setTimeout(function () {
+            $activeElement.removeClass('active');
+            $('.btn-primary').prop('disabled', false);
+        }, 1000);
+    }
+    $('.btn-primary').click(startGame);
+    $('#game > div').click(function () {
+        if ($(this).hasClass('active')) {
+            $(this).removeClass('active');
+            score += 1;
+            playSound('break');
+            $('#score').text(score);
+        }
+    });
+</script>
+</body>
+</html>
